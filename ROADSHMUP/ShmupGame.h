@@ -2,10 +2,12 @@
 
 #include <memory>
 
+#define GLFW_INCLUDE_NONE
 
 // Glad needs to be loaded before glfw3
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
+
 
 
 struct DestroyglfwWin 

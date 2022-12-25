@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+
 
 
 
@@ -128,8 +130,8 @@ int SHMUPGame::Run()
 
 
 
-   Shader firstShader = Shader(".\\shader\\simplerect.vs.glsl", ".\\shader\\simplerect.fs.glsl");
-   Shader rectShader = Shader(".\\shader\\objectRect.vs.glsl", ".\\shader\\objectRect.fs.glsl");
+   Shader firstShader = Shader("./shader/simplerect.vs.glsl", "./shader/simplerect.fs.glsl");
+   Shader rectShader = Shader("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl");
    
 
    glm::vec3 pos = {};
@@ -138,7 +140,7 @@ int SHMUPGame::Run()
 
    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
    
-   OpenGLTexture carTex = OpenGLTexture(".\\res\\img\\redcar.png");
+   OpenGLTexture carTex = OpenGLTexture("./Res/img/redcar.png");
 
    float prevTime = static_cast<float>(glfwGetTime());
    float xPos = 0.0f;
