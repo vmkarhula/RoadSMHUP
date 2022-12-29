@@ -39,4 +39,19 @@ namespace RoadMath {
 		return val;
 	}
 
+	template <typename T>
+	inline T wrapAround(T val, T min, T max)
+	{
+		if(val > max)
+		{
+			val = min + (val - max);
+		}
+
+		if(val < min)
+		{
+			val = max - (min - val);
+		}
+
+		return val;
+	}
 } // namespace RoadMath

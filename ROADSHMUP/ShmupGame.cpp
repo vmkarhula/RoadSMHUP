@@ -7,6 +7,7 @@
 #include "RoadMathUtils.h"
 
 #include "Camera.h"
+#include "SHMUPWorld.h"
 
 #include "DearImGUI/imgui.h"
 #include "DearImGUI/backends/imgui_impl_glfw.h"
@@ -17,11 +18,19 @@
 #include <string>
 #include <vector>
 
+struct Renderable2D
+{
+   glm::vec3 pos;
+   glm::vec3 rotation;
+
+   unsigned int textureID;
+};
 
 
-
-
-SHMUPGame::SHMUPGame(): m_MainWindow(nullptr)
+SHMUPGame::SHMUPGame(): 
+   m_MainWindow(nullptr),
+   m_MWheelOffsetX(0.0f),
+   m_MWheelOffsetY(0.0f)
 {
 }
 
@@ -47,7 +56,7 @@ bool SHMUPGame::Init()
    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-   m_MainWindow = glfwCreateWindow(800U, 600U, "LearnOpenGL", NULL, NULL);
+   m_MainWindow = glfwCreateWindow(800U, 600U, "Wroom!", NULL, NULL);
       
    glfwMakeContextCurrent(m_MainWindow);
    
@@ -68,7 +77,30 @@ bool SHMUPGame::Init()
    ImGui_ImplGlfw_InitForOpenGL(m_MainWindow, true);
    ImGui_ImplOpenGL3_Init(glsl_version);
 
+   glfwSetWindowUserPointer(m_MainWindow, (void*)this);
+
+   // Hook up input callbacks
+
+   auto ScrollWheelCallback = [](GLFWwindow* window, double xOffset, double yOffset)
+   {
+      ((SHMUPGame*)(glfwGetWindowUserPointer(window)))->I_MouseWheel(xOffset, yOffset);
+   };
+
+   glfwSetScrollCallback(m_MainWindow, ScrollWheelCallback);
+
+   RenderInit();
+
    return true;
+}
+
+void SHMUPGame::RenderInit()
+{
+   
+   
+   glEnable(GL_DEPTH_TEST);
+   glDepthFunc(GL_LESS);
+
+   std::cout << "Depth check enabled" << std::endl;
 }
 
 int SHMUPGame::Run()
@@ -129,7 +161,6 @@ int SHMUPGame::Run()
    glEnableVertexAttribArray(1);
 
 
-
    Shader firstShader = Shader("./shader/simplerect.vs.glsl", "./shader/simplerect.fs.glsl");
    Shader rectShader = Shader("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl");
    
@@ -137,6 +168,7 @@ int SHMUPGame::Run()
    glm::vec3 pos = {};
    pos.x = 0.0;
    pos.y = 0.0;
+   pos.z = -0.1f;
 
    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
    
@@ -156,12 +188,41 @@ int SHMUPGame::Run()
       {0, 1, 0 },
       {0, 1, 0 } };
 
-   glm::vec3 roadPos(0.0f, 0.0f, 0.0f);
+   glm::vec3 roadPos[] 
+    {
+      {0.0f, -6.0f, -0.3f},
+      {0.0f, -5.0f, -0.3f},
+      {0.0f, -4.0f, -0.3f},
+      {0.0f, -3.0f, -0.3f},
+      {0.0f, -2.0f, -0.3f},
+      {0.0f, -1.0f, -0.3f},
+      {0.0f, 0.0f, -0.3f},
+      {0.0f, 1.0f, -0.3f},
+      {0.0f, 2.0f, -0.3f},
+      {0.0f, 3.0f, -0.3f},
+      {0.0f, 4.0f, -0.3f},
+      {0.0f, 5.0f, -0.3f},
+      {0.0f, 6.0f, -0.3f}
+     };
+
+   
+
+   Camera mainCam(0.0f, 0.0f, 1.0f);
+
+   OpenGLTexture roadTex("./Res/img/road.png");
+
+   float playerSpeed = 1.0f;
 
    while(!glfwWindowShouldClose(m_MainWindow))
    {
-      // Update system
       
+      /* 
+         ===============
+         INPUT AND SETUP
+         ===============
+      */
+      
+      //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
       // Start the Dear ImGui frame
       ImGui_ImplOpenGL3_NewFrame();
@@ -174,19 +235,21 @@ int SHMUPGame::Run()
          ImGui::SliderFloat("float", &xPos, -1.0f, 1.0f);         
          ImGui::SliderFloat("rotation", &rotation, 0.0f, 2 * glm::pi<float>());
 
+         ImGui::SliderFloat("Speed", &playerSpeed, 0.0f, 5.0f);
+
          ImGui::Checkbox("Identity Projection Matrix", &identityProj);
+
 
          ImGui::Text("ImGUI Reported Average FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
          ImGui::End();
       }
 
-
-
       float overallTime = static_cast<float>(glfwGetTime());
       float tick = overallTime - prevTime;
       prevTime = overallTime;
-            
-
+      
+      mainCam.update(tick);
+         
       if (glfwGetKey(m_MainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
          glfwSetWindowShouldClose(m_MainWindow, true);
 
@@ -219,18 +282,33 @@ int SHMUPGame::Run()
          pos.y -= tick * sideSpeed;
       }
 
+      /* 
+         =============
+         Update system
+         =============
+      */
+
       xPos = RoadMath::clamp(xPos, -1.0f, 1.0f);
 
       pos = glm::vec3(xPos, pos.y, pos.z);
+      
+      
+      
       // Render
+      
+      
       ImGui::Render();
 
       glClearColor(1.0f, 0.0f + glm::cos(overallTime), 0.0f + glm::sin(overallTime), 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       glm::mat4 myMat = glm::mat4(1.0f);
-       
-      glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
+
+      mainCam.adjustZoomTarget(-m_MWheelOffsetY);
+      m_MWheelOffsetY = 0;
+
+      glm::mat4 proj = mainCam.getOrthoProj();
+      //glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
 
       if(identityProj)
       {
@@ -256,6 +334,22 @@ int SHMUPGame::Run()
 
       rotation = RoadMath::normalizeAngle(rotation, 0.0f, 2 * glm::pi<float>());
 
+      for(glm::vec3& roadTile : roadPos)
+      {
+         roadTile.y -= playerSpeed * tick;
+         if(roadTile.y < -6.0f)
+         {
+            roadTile.y += 12.0f;
+         } 
+      }
+
+      /* 
+         ======
+         RENDER
+         ======
+      */
+
+
       glm::mat4 world = glm::translate(glm::mat4(1.0f), pos);
       world = glm::rotate(world, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       
@@ -274,6 +368,21 @@ int SHMUPGame::Run()
 
       glDrawArrays(GL_TRIANGLES, 0, 6);
 
+      for(const glm::vec3& road : roadPos)
+      {
+         glm::mat4 roadWorld = glm::translate(glm::mat4(1.0f), road);
+         
+         glBindTexture(GL_TEXTURE_2D, roadTex.ID());
+
+         rectShader.setMatrix4f("proj", proj);
+         rectShader.setMatrix4f("world", roadWorld);
+         rectShader.setMatrix4f("view", view);
+      
+         glDrawArrays(GL_TRIANGLES, 0, 6);
+
+      }
+
+      
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
       glfwSwapBuffers(m_MainWindow);
@@ -282,4 +391,10 @@ int SHMUPGame::Run()
    }
 
    return 0;
+}
+
+void SHMUPGame::I_MouseWheel(float xOffset, float yOffset)
+{
+   m_MWheelOffsetX += xOffset;
+   m_MWheelOffsetY += yOffset; 
 }

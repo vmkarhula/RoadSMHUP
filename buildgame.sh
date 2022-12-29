@@ -7,6 +7,7 @@ ROADSHMUP/ShmupMain.cpp \
 ROADSHMUP/ShmupGame.cpp \
 ROADSHMUP/OpenGLTexture.cpp \
 ROADSHMUP/Shader.cpp \
+ROADSHMUP/Camera.cpp \
 external/source/glad/glad.c \
 external/source/DearImGUI/imgui.cpp \
 external/source/DearImGUI/imgui_draw.cpp \

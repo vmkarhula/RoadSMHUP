@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
+
 #include <memory>
 #include <vector>
 
@@ -18,6 +20,7 @@ public:
 	~OpenGLRenderer();
 
 	void SubmitObject(unsigned int objectID, float x, float y);
+	void SubmitObject(unsigned int objectID, const glm::mat4& transform);
 	void SetCameraPos(float x, float y, float z);
 	void Paint();
 

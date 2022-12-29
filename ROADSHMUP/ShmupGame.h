@@ -35,12 +35,18 @@ public:
 	bool Init();
 	int Run();
 
+	void I_MouseWheel(float xOffset, float yOffset);
+
 private:
 
+	void RenderInit();
 
 private:
 		
 	GLFWwindow* m_MainWindow; 
 	//SmartGLFWWindow m_MainWindow; 
+
+	float m_MWheelOffsetX;
+	float m_MWheelOffsetY;
 
 };

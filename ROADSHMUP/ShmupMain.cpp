@@ -8,7 +8,7 @@
 int main(int argc, char ** argv)
 {
 	
-	std::cout << "RoadSCHMUP launching" << std::endl;
+	std::cout << "RoadSHMUP launching" << std::endl;
 	std::cout << "Current workign directory" 
 	<<  std::filesystem::current_path() << std::endl;
 
