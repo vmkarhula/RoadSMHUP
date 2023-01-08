@@ -143,24 +143,30 @@
     <ClCompile Include="..\external\include\DearImGUI\imgui_widgets.cpp" />
     <ClCompile Include="..\external\src\glad.c" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EndlessRoad.cpp" />
     <ClCompile Include="GLFW_InputHandler.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="OpenGLTexture.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShmupGame.cpp" />
     <ClCompile Include="ShmupMain.cpp" />
+    <ClCompile Include="SHMUPWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="EndlessRoad.h" />
     <ClInclude Include="GLFW_InputHandler.h" />
     <ClInclude Include="Commands.h" />
-    <ClInclude Include="InputCommand.h" />
+    <ClInclude Include="LevelData.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="OpenGLTexture.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="RoadInput.h" />
     <ClInclude Include="RoadMathUtils.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShmupGame.h" />
+    <ClInclude Include="SHMUPWorld.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

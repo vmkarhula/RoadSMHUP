@@ -28,6 +28,18 @@ OpenGLTexture::OpenGLTexture(std::string filepath) : m_ID(0)
 
 	unsigned char* data = stbi_load(cppPath.string().c_str(), &width, &height, &nrChannels, 0);
 
+	GLuint imgFormat = 0;
+
+	if(nrChannels == 3)
+	{
+		imgFormat = GL_RGB;
+	}
+
+	else if(nrChannels == 4)
+	{
+		imgFormat = GL_RGBA;
+	}
+
 	if (data)
 	{
 		glGenTextures(1, &m_ID);
@@ -40,7 +52,7 @@ OpenGLTexture::OpenGLTexture(std::string filepath) : m_ID(0)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, imgFormat, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		stbi_image_free(data);
@@ -55,4 +67,9 @@ OpenGLTexture::OpenGLTexture(std::string filepath) : m_ID(0)
 OpenGLTexture::~OpenGLTexture()
 {
 
+}
+
+void OpenGLTexture::Bind()
+{
+	glBindTexture(GL_TEXTURE_2D, m_ID);
 }

@@ -6,6 +6,18 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+Camera::Camera():
+   m_Position(glm::vec2(0.0f, 0.0f)),
+   m_ZoomLevel(1.0f),
+   m_AspectX(16),
+   m_AspectY(9),
+   m_MinZoom(1.0f),
+   m_MaxZoom(5.0f),
+   m_ArriveThreshold(0.1f),
+   m_MaxZoomVeloctity(2.0f)
+{
+}
+
 Camera::Camera(float x, float y, float zoom):
    m_Position(glm::vec2(x, y)),
    m_ZoomLevel(zoom),
@@ -15,6 +27,19 @@ Camera::Camera(float x, float y, float zoom):
    m_MaxZoom(5.0f),
    m_ArriveThreshold(0.1f),
    m_MaxZoomVeloctity(2.0f)
+{
+}
+
+Camera::Camera(float x, float y, float zoom, float zoomTarget):
+m_Position(glm::vec2(x, y)),
+m_ZoomLevel(zoom),
+m_AspectX(16),
+m_AspectY(9),
+m_MinZoom(1.0f),
+m_MaxZoom(5.0f),
+m_ArriveThreshold(0.1f),
+m_MaxZoomVeloctity(2.0f), 
+m_ZoomTarget(zoomTarget)
 {
 }
 

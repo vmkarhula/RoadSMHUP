@@ -6,11 +6,13 @@ class Camera
 {
 public:
 
+	Camera();
 	Camera(float x, float y, float zoom);
+	Camera(float x, float y, float zoom, float zoomTarget);
 	~Camera();
 
 	Camera(const Camera& rhs);
-	Camera& operator=(const Camera& rhs) = delete;
+	Camera& operator=(const Camera& rhs) = default;
 	
 	Camera(Camera&& rhs) = delete; 
 	Camera&& operator=(Camera&& rhs) = delete;

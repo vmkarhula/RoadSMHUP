@@ -2,7 +2,9 @@
 
 #include "GLFW/glfw3.h"
 
+#include "RoadInput.h"
 
+#include <vector>
 
 class GLFWInputHandler
 {
@@ -16,7 +18,7 @@ public:
 	GLFWInputHandler operator=(const GLFWInputHandler& rhs) = delete;
 	GLFWInputHandler operator=(GLFWInputHandler&& rhs) = delete;
 
-	void PollEvents();
+	void PollEvents(EventQueue& eq);
 
 
 private:

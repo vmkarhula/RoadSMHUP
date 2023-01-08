@@ -66,6 +66,15 @@
     <ClCompile Include="..\external\include\DearImGUI\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files\external\DearImgui</Filter>
     </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EndlessRoad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SHMUPWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShmupGame.h">
@@ -92,11 +101,20 @@
     <ClInclude Include="RoadMathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EndlessRoad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SHMUPWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoadInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelData.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

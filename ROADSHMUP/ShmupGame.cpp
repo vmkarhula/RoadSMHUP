@@ -3,8 +3,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Shader.h"
-#include "OpenGLTexture.h"
+#include "OpenGLRenderer.h"
 #include "RoadMathUtils.h"
+#include "EndlessRoad.h"
+
+#include "GLFW_InputHandler.h"
 
 #include "Camera.h"
 #include "SHMUPWorld.h"
@@ -160,26 +163,17 @@ int SHMUPGame::Run()
    glEnableVertexAttribArray(0);
    glEnableVertexAttribArray(1);
 
-
-   Shader firstShader = Shader("./shader/simplerect.vs.glsl", "./shader/simplerect.fs.glsl");
-   Shader rectShader = Shader("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl");
-   
+   Shader rectShader = Shader("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl");   
 
    glm::vec3 pos = {};
    pos.x = 0.0;
    pos.y = 0.0;
    pos.z = -0.1f;
 
-   glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
-   
-   OpenGLTexture carTex = OpenGLTexture("./Res/img/redcar.png");
-
    float prevTime = static_cast<float>(glfwGetTime());
    float xPos = 0.0f;
    float sideSpeed = 1.0f;
    float rotation = 0.0f;
-
-   bool identityProj = false;
 
    std::vector<std::vector<int>> landGrid
    { {0, 1, 0},
@@ -205,13 +199,16 @@ int SHMUPGame::Run()
       {0.0f, 6.0f, -0.3f}
      };
 
-   
-
-   Camera mainCam(0.0f, 0.0f, 1.0f);
-
-   OpenGLTexture roadTex("./Res/img/road.png");
-
    float playerSpeed = 1.0f;
+
+   OpenGLRenderer2D* renderer2D = new OpenGLRenderer2D(m_MainWindow, 800, 600);
+   EndlessRoadWorld* gameWorld = new EndlessRoadWorld();
+
+   gameWorld->PrepareRenderer(renderer2D);
+
+   GLFWInputHandler inputHandler(m_MainWindow);
+   
+   gameWorld->AttachEventQueue(m_EventQueue);
 
    while(!glfwWindowShouldClose(m_MainWindow))
    {
@@ -237,8 +234,6 @@ int SHMUPGame::Run()
 
          ImGui::SliderFloat("Speed", &playerSpeed, 0.0f, 5.0f);
 
-         ImGui::Checkbox("Identity Projection Matrix", &identityProj);
-
 
          ImGui::Text("ImGUI Reported Average FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
          ImGui::End();
@@ -248,8 +243,9 @@ int SHMUPGame::Run()
       float tick = overallTime - prevTime;
       prevTime = overallTime;
       
-      mainCam.update(tick);
-         
+      //mainCam.update(tick);
+      
+
       if (glfwGetKey(m_MainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
          glfwSetWindowShouldClose(m_MainWindow, true);
 
@@ -282,6 +278,8 @@ int SHMUPGame::Run()
          pos.y -= tick * sideSpeed;
       }
 
+      inputHandler.PollEvents(m_EventQueue);
+
       /* 
          =============
          Update system
@@ -292,7 +290,7 @@ int SHMUPGame::Run()
 
       pos = glm::vec3(xPos, pos.y, pos.z);
       
-      
+      gameWorld->Update(tick);
       
       // Render
       
@@ -300,20 +298,11 @@ int SHMUPGame::Run()
       ImGui::Render();
 
       glClearColor(1.0f, 0.0f + glm::cos(overallTime), 0.0f + glm::sin(overallTime), 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      glm::mat4 myMat = glm::mat4(1.0f);
+      renderer2D->BeginFrame();
+   
 
-      mainCam.adjustZoomTarget(-m_MWheelOffsetY);
       m_MWheelOffsetY = 0;
-
-      glm::mat4 proj = mainCam.getOrthoProj();
-      //glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
-
-      if(identityProj)
-      {
-         proj = glm::mat4(1.0f);
-      }
 
       rectShader.Use();
       
@@ -332,6 +321,7 @@ int SHMUPGame::Run()
          rotation = 0.0f;
       }
 
+      
       rotation = RoadMath::normalizeAngle(rotation, 0.0f, 2 * glm::pi<float>());
 
       for(glm::vec3& roadTile : roadPos)
@@ -349,44 +339,22 @@ int SHMUPGame::Run()
          ======
       */
 
+      gameWorld->SendRenderables(renderer2D);
+
+      renderer2D->Paint();
 
       glm::mat4 world = glm::translate(glm::mat4(1.0f), pos);
       world = glm::rotate(world, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       
       glm::mat4 view(1.0f);
 
-      rectShader.setMatrix4f("proj", proj);
+      //rectShader.setMatrix4f("proj", proj);
       rectShader.setMatrix4f("world", world);
       rectShader.setMatrix4f("view", view);
-      //rectShader.setUniformSampler2D()
-
-      glBindTexture(GL_TEXTURE_2D, carTex.ID());
- 
-
-      //firstShader.Use();
-      //firstShader.setVector3f("ourColor", pos);
-
-      glDrawArrays(GL_TRIANGLES, 0, 6);
-
-      for(const glm::vec3& road : roadPos)
-      {
-         glm::mat4 roadWorld = glm::translate(glm::mat4(1.0f), road);
-         
-         glBindTexture(GL_TEXTURE_2D, roadTex.ID());
-
-         rectShader.setMatrix4f("proj", proj);
-         rectShader.setMatrix4f("world", roadWorld);
-         rectShader.setMatrix4f("view", view);
-      
-         glDrawArrays(GL_TRIANGLES, 0, 6);
-
-      }
-
-      
+            
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+      
       glfwSwapBuffers(m_MainWindow);
-
       glfwPollEvents();
    }
 
@@ -395,6 +363,17 @@ int SHMUPGame::Run()
 
 void SHMUPGame::I_MouseWheel(float xOffset, float yOffset)
 {
-   m_MWheelOffsetX += xOffset;
-   m_MWheelOffsetY += yOffset; 
+   InputEvent e;
+
+   if(yOffset > 0.0f)
+   {
+      e.code = InputEvent::InputCode::ZoomIn;
+   }
+   
+   else
+   {
+      e.code = InputEvent::InputCode::ZoomOut;
+   }
+  
+   m_EventQueue.push_back(e);
 }

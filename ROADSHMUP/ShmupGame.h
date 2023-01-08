@@ -2,12 +2,14 @@
 
 #include <memory>
 
+
 #define GLFW_INCLUDE_NONE
 
 // Glad needs to be loaded before glfw3
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
+#include "RoadInput.h"
 
 
 struct DestroyglfwWin 
@@ -45,6 +47,8 @@ private:
 		
 	GLFWwindow* m_MainWindow; 
 	//SmartGLFWWindow m_MainWindow; 
+	
+	EventQueue m_EventQueue;
 
 	float m_MWheelOffsetX;
 	float m_MWheelOffsetY;
