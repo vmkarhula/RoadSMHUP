@@ -22,20 +22,6 @@ EndlessRoadWorld::EndlessRoadWorld() :
 		{0.0f, 5.0f, -0.3f},
 		{0.0f, 6.0f, -0.3f} },
 
-	m_Grass{{ -1.0f, -6.0f, -0.3f },
-				{ -1.0f, -5.0f, -0.3f },
-				{ -1.0f, -4.0f, -0.3f },
-				{ -1.0f, -3.0f, -0.3f },
-				{ -1.0f, -2.0f, -0.3f },
-				{ -1.0f, -1.0f, -0.3f },
-				{ -1.0f, 0.0f, -0.3f },
-				{ -1.0f, 1.0f, -0.3f },
-				{ -1.0f, 2.0f, -0.3f },
-				{ -1.0f, 3.0f, -0.3f },
-				{ -1.0f, 4.0f, -0.3f },
-				{ -1.0f, 5.0f, -0.3f },
-				{ -1.0f, 6.0f, -0.3f } },
-	
 		m_MainCamera(0.0f, 0.0f, 3.0f, 3.0f),
 		m_PlayerSpeed(1.0f),
 		m_PlayerPosition(0.0f, 0.0f, 0.0f),
@@ -51,7 +37,7 @@ EndlessRoadWorld::EndlessRoadWorld() :
 
 			m_EventQueue(nullptr)
 {
-	GenerateLandscapeGrid(6, 6);
+	GenerateLandscapeGrid(10, 10);
 }
 
 EndlessRoadWorld::~EndlessRoadWorld()
@@ -98,9 +84,14 @@ void EndlessRoadWorld::Update(float dt)
 
 	for(std::vector<glm::vec3>& row : m_LandScape)
 	{
-		for(glm::vec3 square : row)
+		for(glm::vec3& square : row)
 		{
-			
+			square.y -= m_PlayerSpeed * dt;
+		
+			if (square.y < -6.0f)
+			{
+				square.y += 12.0f;
+			}
 		}
 	}
 
@@ -120,10 +111,20 @@ void EndlessRoadWorld::SendRenderables(OpenGLRenderer2D* renderer)
 	{
 		renderer->SubmitRect(m_RenderTagCache["RoadTile"], roadTile, 0);
 	}
-
+	/*
 	for (const glm::vec3& grassTile : m_Grass)
 	{
 		renderer->SubmitRect(m_RenderTagCache["Grass_1"], grassTile, 0);
+	}
+	*/
+
+	for (const std::vector<glm::vec3>& tileRow: m_LandScape)
+	{
+
+		for (const glm::vec3& grassTile : tileRow)
+		{
+			renderer->SubmitRect(m_RenderTagCache["Grass_1"], grassTile, 0);
+		}
 	}
 
 	renderer->SubmitRect(m_RenderTagCache["PlayerCar"], m_PlayerPosition, m_PlayerAngle);
@@ -217,13 +218,13 @@ void EndlessRoadWorld::GenerateLandscapeGrid(int gridHeight, int gridWidth)
 {
 	m_LandScape = std::vector(gridHeight, std::vector<glm::vec3>(gridWidth, glm::vec3()));
 
-	float xCoordStart = -3.0f;
-	float yCoordStart = -3.0f;
+	float xCoordStart = -6.0f;
+	float yCoordStart = -6.0f;
 
-	float zLevel = 0.0f;
+	float zLevel = -0.3f;
 
-	float xCoordEnd = 3.0f;
-	float yCoordEnd = 3.0f;
+	float xCoordEnd = 6.0f;
+	float yCoordEnd = 6.0f;
 
 	float xStep = (xCoordEnd - xCoordStart) / gridWidth;
 	float yStep = (yCoordEnd - yCoordStart) / gridHeight;
