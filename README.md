@@ -10,6 +10,13 @@ This is a simple SHMUP Game base to quickly experiment with various parts of gam
   - Builds nicely in Visual Studio 2022 from the git
   - Runs a simple SHMUP that allows experimentation with various APIs and features without too much hassle. 
  
+
+## Building and running
+
+ROADSHMUP is currently tested mostly in debug mode in Visual Studio 2022, so that's your best bet for running the game.
+
+There are some issues with the working directory not being included properly in the project. If you receive error in missing files, try setting it to the solution directory. 
+ 
 ## Current external libraries used
 
 ### Glad 
