@@ -154,11 +154,13 @@
     <ClCompile Include="SHMUPWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EndlessRoad.h" />
     <ClInclude Include="GLFW_InputHandler.h" />
     <ClInclude Include="Commands.h" />
     <ClInclude Include="LevelData.h" />
+    <ClInclude Include="Objects.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="OpenGLTexture.h" />
     <ClInclude Include="RigidBody.h" />

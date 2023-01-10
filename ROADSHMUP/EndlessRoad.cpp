@@ -33,11 +33,12 @@ EndlessRoadWorld::EndlessRoadWorld() :
 				"PlayerCar",
 				"RoadTile",
 				"Grass_1",
+				"Rock_1"
 			}),
 
 			m_EventQueue(nullptr)
 {
-	GenerateLandscapeGrid(10, 10);
+	GenerateLandscapeGrid(12, 12);
 }
 
 EndlessRoadWorld::~EndlessRoadWorld()

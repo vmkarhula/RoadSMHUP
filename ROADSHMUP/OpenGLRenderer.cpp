@@ -17,7 +17,8 @@ OpenGLRenderer2D::OpenGLRenderer2D(GLFWwindow* targetWindow, int width, int heig
 	m_TextureFilepaths({ 
 								{"RoadTile", "./Res/img/road.png"},
 								{"PlayerCar", "./Res/img/redcar.png"},
-								{"Grass_1", "./Res/img/grass.png"}
+								{"Grass_1", "./Res/img/grass.png"},
+								{"rock_1", "./Res/img/rock_1.png"}
 							})
 {
 }
