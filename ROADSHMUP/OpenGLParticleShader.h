@@ -8,7 +8,6 @@
 #include "glad/glad.h"
 
 
-
 class OpenGLParticleShader
 {
 	enum class ShaderType { VERTEX, FRAGMENT, COMPUTE, GEOMETRY, TESSELLATION, PROGRAM };
