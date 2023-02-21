@@ -9,7 +9,8 @@
 #include <vector>
 #include <filesystem>
 
-#include "Shader.h"
+//#include "Shader.h"
+#include "ShaderProgram.h"
 #include "Camera.h"
 #include "OpenGLTexture.h"
 
@@ -71,7 +72,7 @@ private:
 
 	Camera m_MainCamera;
 
-	std::unique_ptr<Shader> m_RectShader;
+	std::unique_ptr<ShaderProgram> m_RectShader;
 
 	std::vector<Drawable> m_RenderQueue;
 	std::unordered_map<std::string, path> m_TextureFilepaths;

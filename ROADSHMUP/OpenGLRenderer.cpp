@@ -12,7 +12,7 @@ OpenGLRenderer2D::OpenGLRenderer2D(GLFWwindow* targetWindow, int width, int heig
 	m_TargetWindow(targetWindow),
 	m_WindowWidth(width),
 	m_WindowHeight(height),
-	m_RectShader(std::make_unique<Shader>("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl")),
+	m_RectShader(std::make_unique<ShaderProgram>("RectangleShader")),
 	m_MainCamera(),
 	m_TextureFilepaths({ 
 								{"RoadTile", "./Res/img/road.png"},
@@ -21,6 +21,14 @@ OpenGLRenderer2D::OpenGLRenderer2D(GLFWwindow* targetWindow, int width, int heig
 								{"rock_1", "./Res/img/rock_1.png"}
 							})
 {
+	//m_RectShader(std::make_unique<Shader>("./shader/objectRect.vs.glsl", "./shader/objectRect.fs.glsl"))
+	m_RectShader->CompileShader(ShaderProgram::ShaderType::VERTEX, std::filesystem::path("./shader/objectRect.vs.glsl"));
+	m_RectShader->CompileShader(ShaderProgram::ShaderType::FRAGMENT, std::filesystem::path("./shader/objectRect.fs.glsl"));
+	if (!m_RectShader->LinkProgram())
+	{
+		std::cerr << "OpenGLRenderer Error: Failed linking shader: " << m_RectShader->Name() << std::endl;
+	}
+
 }
 
 OpenGLRenderer2D::~OpenGLRenderer2D()
@@ -104,9 +112,9 @@ void OpenGLRenderer2D::DrawObject(const Drawable& drawable)
 	glm::mat4 proj = m_MainCamera.getOrthoProj();
 	glm::mat4 view(1.0f);
 
-	m_RectShader->setMatrix4f("proj", proj);
-	m_RectShader->setMatrix4f("world", world);
-	m_RectShader->setMatrix4f("view", view);
+	m_RectShader->SetMatrix4f("proj", proj);
+	m_RectShader->SetMatrix4f("world", world);
+	m_RectShader->SetMatrix4f("view", view);
 
 	glBindTexture(GL_TEXTURE_2D, drawable.rendertag);
 
